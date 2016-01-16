@@ -1,0 +1,79 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm}
+
+\DeclareMathOperator{\Var}{Var}
+%opening
+\title{Sta 601 Homework 1}
+\author{Azeem Zaman}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 1}
+First we consider the case where $x=1$.  In this case we have
+\begin{align*}
+ p(\theta|x) &\propto p(x|\theta)p(\theta) \\
+ &\propto \theta(1-\theta)^{1-1}p(\theta) \\
+ &\propto \theta p(\theta) \\
+  &\propto \begin{cases}
+           (1/4)(2/3) & \theta = 1/4 \\
+           1(1/3) & \theta = 1 \\
+          \end{cases} \\
+  &\propto \begin{cases}
+           1/6& \theta = 1/4 \\
+           1/3 & \theta = 1. \\
+          \end{cases}
+\end{align*}
+Note that this is not a valid density; the probabilities sum to $1/2$.  This is, however, proportional to the posterior, and we see that multiplying by 2 will result in a valid density:
+\begin{align*}
+ p(\theta|x) = \begin{cases}
+                1/3 & \theta = 1/4 \\
+                2/3 & \theta = 1. \\
+               \end{cases}
+\end{align*}
+For the case when $x>1$, we note that the support of the posterior is a subset of the support of the prior because the posterior is proportional to the likelihood multiplied by the prior.  Simply put, if the prior is equal to zero, then the posterior must also be equal to zero.  Therefore there are at most two non-zero probabilities in the prior: $\theta = 1/4$ and $\theta = 1$.  The posterior probability of $\theta = 1$ satisfies
+\begin{align*}
+ p(\theta = 1|x) &\propto p(x|\theta=1)p(\theta=1) \\
+ &\propto 1(0)^{x-1}(1/3) \\
+ &\propto 0. \\
+\end{align*}
+Being proportional to zero is equivalent to being zero, so $p(\theta=1|x) = 0$ when $x>1$.  The assumption that $x>1$ is critical because when $x=1$ we have $0^{1-1}=1$ by convention.  As the posterior must be a valid distribution and we only have one other point that can have positive probability, we can immedietly conclude that 
+\begin{align*}
+ p(\theta|x) = \begin{cases}
+                1 & \theta = 1/4 \\
+                0 & $otherwise.$ \\
+               \end{cases}
+\end{align*}
+These posteriors have nice interpretations.  Suppose $Y$ is a Bernoulli random variable with probability $\theta$.  The Geometric distribution (in the form we are using) model the probability that first ``success'' ($Y=1$) occurs on trail $X$.  If we observe $x=1$, what should we conclude?  The probability that we observe $x=1$ when $\theta = 1/4$ is $1/4$, but the probability that we observe $x=1$ when $\theta = 1$ is 1, it must occur.  So if we observe, $x=1$, we are more likely to believe that $\theta=1$ than $\theta=1/4$, so the posterior probability that $\theta = 1/4$ decreases (from $2/3$ to $1/3$) and the posterior probability that $\theta = 1$ increases (from $1/3$ to $2/3$).  If $\theta = 1$, then every trail gives a success, so we cannot observe $x>1$.  This is why the posterior probability that $\theta = 1$ is zero when $x>1$.  
+
+\section{Problem 2}
+\subsection{Part a}
+We will show that the Gamma distribution is conjugate to the exponential likelihood.  Let $g(\theta|a,b)$ be the p.d.f. for the gamma distribution with shape paramter $a$ and rate parameter $b$.  Then the posterior $p(\theta|x_1, \ldots, x_n)$ satisfies
+\begin{align*}
+ p(\theta|x_1, \ldots, x_n) &\propto f(x_1, \ldots, x_n|\theta)g(\theta|a,b) \\
+ &\propto \theta^a e^{-b \theta} prod_{i=1}^n {\theta e^{-\theta x_i}}  \\
+ &\propto \theta^{a+n} e^{-\theta(b + \sum_{i=1}^n x_i}. 
+\end{align*}
+This is the kernel of a Gamma distribution with shape paramter $a+n$ and rate parameter $b + \sum_{i=1}^n x_i$.  So $\theta|x_1, \ldots x_n \sim Gamma(a+n, b+ \sum_{i=1}^n x_i)$.  
+
+\subsection{Part b}
+First we derive the $k$th moment of the Gamma distribution for $X \sim Gamma(a,b)$:
+\begin{align*}
+ E(X^k) &= \int_0^\infty {\frac{b^a}{\Gamma(a)}x^kx^{a-1} e^{-bx} \, dx} \\
+ &= \frac{b^a}{\Gamma(a)} \int_0^\infty x^{a+k-1} e^{-bx} \, dx \\
+ &= \left(\frac{b^{a+k}}{b^{a+k}}\right)\left(\frac{\Gamma(a+k)}{\Gamma(a+k)}\right)\frac{b^a}{\Gamma(a)} \int_0^\infty x^{a+k-1} e^{-bx} \, dx \\
+ &= \frac{b^a\Gamma(a+k)}{b^{a+k}\Gamma(a)} \int_0^\infty \frac{b^{a+k}}{\Gamma(a+k)}x^{a+k-1} e^{-bx} \, dx \\
+ &= \frac{(a+k-1)(a+k-2)\hdots(a)\Gamma(a)}{b^k\Gamma(a)} \\
+ &= \frac{(a+k-1)(a+k-2)\hdots(a)}{b^k}.
+\end{align*}
+In particular, the first and second moments are $a/b$ and $(a+1)a/b^2$, respectively.  So the mean is $a/b$ and the variance is
+\begin{align*}
+  \Var(X) &= E(X^2) - E(X)^2 \\
+  &= \frac{(a^2 + a}{b^2} - \frac{a^2}{b^2} \\
+  &= \frac{a}{b^2}
+\end{align*}
+
+
+\end{document}
