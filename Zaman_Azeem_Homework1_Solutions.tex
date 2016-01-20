@@ -1,6 +1,7 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amsthm}
+\usepackage{graphicx}
 
 \DeclareMathOperator{\Var}{Var}
 %opening
@@ -71,9 +72,50 @@ First we derive the $k$th moment of the Gamma distribution for $X \sim Gamma(a,b
 In particular, the first and second moments are $a/b$ and $(a+1)a/b^2$, respectively.  So the mean is $a/b$ and the variance is
 \begin{align*}
   \Var(X) &= E(X^2) - E(X)^2 \\
-  &= \frac{(a^2 + a}{b^2} - \frac{a^2}{b^2} \\
+  &= \frac{a^2 + a}{b^2} - \frac{a^2}{b^2} \\
   &= \frac{a}{b^2}
 \end{align*}
+Therefore the posterior mean is $(a+n)/(b+\sum_{i=1}^{n}{x_{i}})$ and the posterior variance is $(a+n)/(b+\sum_{i=1}^{n})^{2}$
+\subsection{Part c}
+We will begin by fixing the hyperparamters $a$ and $b$ at 3.  This results in a prior mean of $1$.  The plot the likelihood and compute the prior, we must also fix values for $n$ and $\sum_{i=1}^{2}x_{i}$.  We shall set $n=10$ and $\sum_{i=1}^{2}x_{i} = 10$.  These particular values were chosen so that the M.L.E. ($1/\bar{x}_{n}$) is the same as the prior mean, suggesting that our prior beliefs are at least somewhat accurate.  The plot is show in Figure \ref{jointplot}.
+\begin{figure}
+\centering
+\includegraphics[width = .75\textwidth]{jointplot.pdf}
+\caption{\label{jointplot} A plot of the prior distribution, $Gamma(3,3)$, the likelihood (assuming $n=10$ and $\bar{x}_{n}=1$), and the posterior, $Gamma(13, 13)$.}
+\end{figure}
+As expected, we find that posterior is a weighted average of the prior distribution and the likelihood.
 
+\subsection{Part d}
+Now we vary $a$ and $b$ and examine the effect of the posterior (using the same value of $n$ and $\bar{x}_{n}$).    
+\begin{figure}
+\centering
+\includegraphics[width = \textwidth]{gridplot.pdf}
+\caption{\label{gridplot} A plot of the prior distribution (a gamma with the listed parameters), the likelihood (assuming $n=10$ and $\bar{x}_{n}=1$), and the posterior (with parameters $a + 10$ and $b+10$).}
+\end{figure}
+Generally speaking, larger values for the hyperparameters represent higher confidence in the prior and result in a posterior that is closer to the prior than the likelihood.  In Figure \ref{gridplot} we can compare the posterior (the dotted line) for various combinations of hyperparameters.  The likelihood (the dashed line) is constant in all plots and can be used as a reference.  In all cases, we see that the posterior is close to the likelihood, which suggests that the result is relatively stable to changes in the prior.  
 
+We have selected a relatively small $n=10$ for our analysis.  If we increase the sample size to $n=100$, we would expect the data, as represented by the likelihood, to dominate.  A similar plot is shown in Figure \ref{gridplotbign}.  We indeed see that the likelihood is virtually indistinguishable from the posterior despite variations in the hyperparamters $a$ and $b$.  This is an empirical demonstration of the idea that the exact choice of prior is not as important when the sample size is large.
+\begin{figure}
+\centering
+\includegraphics[width = \textwidth]{gridplotbign.pdf}
+\caption{\label{gridplotbign} A plot of the prior distribution (a gamma with the listed parameters), the likelihood (assuming $n=100$ and $\bar{x}_{n}=1$), and the posterior (with parameters $a + 10$ and $b+10$).}
+\end{figure}
+
+\section{Problem 3}
+Using the notation of indicator functions, we find $p(x|\theta) = I_{(0,\theta)}(x)/\theta$.  Therefore
+\begin{align*}
+p(\theta|x) &\propto p(x|\theta)p(\theta) \\
+&\propto \frac{\alpha\beta^{\alpha}}{\theta^{\alpha+1}}I_{(\beta,\infty)}(\theta)\frac{I_{(0,\theta)}(x)}{\theta} \\
+& \propto \frac{1}{\theta^{\alpha+2}}I_{(\beta,\infty)}(\theta)I_{(0,\theta)}(x).
+\end{align*}
+We must use the product of the two indicator functions to determine the support of the posterior. The function $I_{(\beta,\infty)}(\theta)$ tells use that $\beta < \theta$ on the support, while the function $I_{(0,\theta)}(x)$ tell us that $\theta > x$.  In other words, the function is only non-zero if $\theta > \max(\beta, x)$.  We can rewrite the expression using a single indicator function:
+\begin{align*}
+p(\theta|x) &\propto \frac{1}{\theta^{\alpha+2}}I_{(\max(\beta, x),\infty)}(\theta),
+\end{align*}
+which the the kernel of a Pareto distribution.  The value of the $\beta$ parameter depends on the $\max(\beta,x)$, but we can still write
+\begin{align*}
+\theta|X &\sim Pareto(\alpha+1, \max(\beta, x)) \\
+p(\theta | x) &= \frac{(\alpha+1)(\max(\beta, x))^{\alpha+1}}{\theta^{\alpha+2}}I_{(\max(\beta, x),\infty)}(\theta).
+\end{align*}
+Therefore the Pareto distribution is conjugate with the uniform likelihood.  
 \end{document}
